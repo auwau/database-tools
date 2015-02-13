@@ -1,0 +1,1 @@
+﻿UPDATE [User] set [Password] = ([Username] + 's up');

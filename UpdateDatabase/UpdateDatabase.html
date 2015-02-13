@@ -1,4 +1,4 @@
-<h1>UpdateDatabase</h1>
+﻿<h1>UpdateDatabase</h1>
 
 <p>This small application has two modes of running.</p>
 
@@ -9,19 +9,7 @@
 
 <h2>Update mode</h2>
 
-<p>When a project-file (<code>.sqlproj</code>) is specified or the app is run from the same folder as a project-file, the following steps will be taken:</p>
-
-<ol>
-<li>Load project-file</li>
-<li>Increment minor version of <code>DacVersion</code>-property.</li>
-<li>Build the project
-<ul>
-<li>On fail: Reset old version</li>
-</ul></li>
-<li>Find the newest <code>.dacpac</code>-file</li>
-<li>Copy it to the Snapshots-folder</li>
-<li>Include it in the project-file.</li>
-</ol>
+<p>The user is presented with options to decide the new version number. A snapshot is then created with that version.</p>
 
 <h3>Examples</h3>
 
@@ -53,5 +41,25 @@
 
 <h3>Example</h3>
 
-<pre><code>    UpdateDatabase.exe "C:\Development\Project.Database\DevSqlDeploy"
+<pre><code>    UpdateDatabase.exe /p:"C:\Development\Project.Database\DevSqlDeploy.publish.xml"
 </code></pre>
+
+<h1>Roadmap</h1>
+
+<h1>DAC Upgrader</h1>
+
+<h1>Deployment-mode</h1>
+
+<ol>
+<li>Find the latest version in History-folder</li>
+<li>Check the deployment target's version.
+<ul>
+<li>The target has the same version -> Stop.</li>
+<li>The target does not exist -> Deploy latest version.</li>
+<li>The target has an older version.
+<ol>
+<li>Locate the older version in the upgrades folder and select all version since (excluding the current version and including the latest version).</li>
+<li>Sequentially deploy each version increment</li>
+</ol></li>
+</ul></li>
+</ol>

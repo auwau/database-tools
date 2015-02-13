@@ -27,6 +27,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>14b564ac</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,29 +63,33 @@
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Data.Tools.Contracts.11">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.Data.Tools.Contracts.11.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Contracts">
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Sql">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Schema.Sql, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Tasks.Sql.11">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.Data.Tools.Schema.Tasks.Sql.11.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Schema.Tasks.Sql">
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Tasks.Sql.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Utilities.Sql.11">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.Data.Tools.Schema.Utilities.Sql.11.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Schema.Utilities.Sql">
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Utilities.Sql.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Utilities">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.Data.Tools.Utilities.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Utilities, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SqlServer.Dac">
-      <HintPath>..\packages\Microsoft.DACFx3.1.0.1\lib\Microsoft.SqlServer.Dac.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.Dac, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.SqlServer.Dac.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Dac.Extensions">
+      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.SqlServer.Dac.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -97,26 +102,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleAppConfig.cs" />
+    <Compile Include="Interfaces\IProvideDacHistory.cs" />
+    <Compile Include="Interfaces\IProvideDacVersion.cs" />
+    <Compile Include="Legacy\ConsoleAppConfig.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Legacy\Legacy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Providers\DacHistory.cs" />
+    <Compile Include="Providers\DacVersionSqlProvider.cs" />
+    <Compile Include="VersionApp.cs" />
+    <Compile Include="Util\Arguments.cs" />
+    <Compile Include="DeployApp.cs" />
+    <Compile Include="Util\VersionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
     <None Include="UpdateDatabase.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="UpdateDbVersion_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -136,27 +140,26 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EmbeddedResources\Microsoft.Data.Tools.Schema.Sql.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EmbeddedResources\Microsoft.Data.Tools.Utilities.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EmbeddedResources\Microsoft.SqlServer.Dac.dll" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Schema.Sql.dll" />
+    <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Utilities.dll" />
+    <EmbeddedResource Include="costura32\Microsoft.SqlServer.Dac.dll" />
+    <Content Include="FodyWeavers.xml" />
     <Content Include="UpdateDatabase.html">
       <DependentUpon>UpdateDatabase.md</DependentUpon>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">
+    <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+  </Target>
+  <Import Project="..\packages\Fody.1.26.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.26.1\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.26.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.26.1\build\Fody.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
