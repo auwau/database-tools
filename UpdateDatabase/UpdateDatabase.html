@@ -1,4 +1,4 @@
-<h1>UpdateDatabase</h1>
+﻿<h1>UpdateDatabase</h1>
 
 <p>This small application has two modes of running.</p>
 
@@ -55,3 +55,23 @@
 
 <pre><code>    UpdateDatabase.exe "C:\Development\Project.Database\DevSqlDeploy"
 </code></pre>
+
+<h1>Roadmap</h1>
+
+<h1>DAC Upgrader</h1>
+
+<h1>Deployment-mode</h1>
+
+<ol>
+<li>Find the latest version in History-folder</li>
+<li>Check the deployment target's version.
+<ul>
+<li>The target has the same version -> Stop.</li>
+<li>The target does not exist -> Deploy latest version.</li>
+<li>The target has an older version.
+<ol>
+<li>Locate the older version in the upgrades folder and select all version since (excluding the current version and including the latest version).</li>
+<li>Sequentially deploy each version increment</li>
+</ol></li>
+</ul></li>
+</ol>
