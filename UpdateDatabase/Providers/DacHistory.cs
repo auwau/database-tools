@@ -41,6 +41,26 @@ namespace UpdateDatabase.Providers
             return latest;
         }
 
+        public FileInfo GetLatestFile()
+        {
+            var files = Directory.EnumerateFiles(Path.Combine(WorkingDirectory.ToString(), Constants.SnapshotDirectory), "*" + Constants.DACPAC_EXT, SearchOption.AllDirectories);
+
+            var latest = default(DacPackage);
+            var file = default(FileInfo);
+
+            foreach (var item in files)
+            {
+                var current = DacPackage.Load(item);
+                if (latest == null || current.Version > latest.Version)
+                {
+                    latest = current;
+                    file = new FileInfo(item);
+                }
+            }
+
+            return file;
+        }
+
         public ICollection<DacPackage> GetHistory(Version fromVersion)
         {
             var files = Directory.EnumerateFiles(Path.Combine(WorkingDirectory.ToString(), Constants.SnapshotDirectory), "*" + Constants.DACPAC_EXT, SearchOption.AllDirectories);

@@ -111,9 +111,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\DacHistory.cs" />
     <Compile Include="Providers\DacVersionSqlProvider.cs" />
-    <Compile Include="UpdaterApp.cs" />
+    <Compile Include="VersionApp.cs" />
     <Compile Include="Util\Arguments.cs" />
-    <Compile Include="Deployer.cs" />
+    <Compile Include="DeployApp.cs" />
     <Compile Include="Util\VersionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +140,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Schema.Sql.dll" />
+    <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Utilities.dll" />
+    <EmbeddedResource Include="costura32\Microsoft.SqlServer.Dac.dll" />
     <Content Include="FodyWeavers.xml" />
     <Content Include="UpdateDatabase.html">
       <DependentUpon>UpdateDatabase.md</DependentUpon>

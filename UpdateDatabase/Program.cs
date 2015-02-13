@@ -24,13 +24,14 @@ namespace UpdateDatabase
 
             if (File.Exists(publishSettings))
             {
-                var deployer = new Deployer(new Providers.DacVersionSqlProvider(), new Providers.DacHistory(new FileInfo(publishSettings).Directory));
+                var deployer = new DeployApp(new Providers.DacVersionSqlProvider(), new Providers.DacHistory(new FileInfo(publishSettings).Directory));
                 deployer.Deploy(publishSettings);
             }
             else
             {
                 //Snapshot-mode
-                var updater = new UpdaterApp(new DirectoryInfo(Environment.CurrentDirectory));
+                var workingDir = new DirectoryInfo(Environment.CurrentDirectory);
+                var updater = new VersionApp(workingDir, new Providers.DacHistory(workingDir));
                 var oldVersion = new Version(updater.SqlProject.GetPropertyValue("DacVersion"));
                 var versionHelper = new VersionHelper(oldVersion);
 
@@ -42,6 +43,8 @@ namespace UpdateDatabase
                 Console.WriteLine("1) Build: only changed post deploy data => {0}", versionHelper.NewBuild());
                 Console.WriteLine("2) Minor: changed data, added or renamed columns => {0}", versionHelper.NewMinor());
                 Console.WriteLine("3) Major: add new tables, columns causing data motion => {0}", versionHelper.NewMajor());
+                Console.WriteLine("");
+                Console.WriteLine("0) Roll back: Removes the latest versioned snapshot and downgrades the project version to match the new current version.");
 
                 var newVersion = default(Version);
                 Console.Write("Choose one: ");
@@ -60,13 +63,17 @@ namespace UpdateDatabase
                         case '3':
                             newVersion = versionHelper.NewMajor();
                             break;
+                        case '0':
+                            updater.RollBack();
+                            return;
                         default:
                             break;
                     }
                 } while (newVersion == null);
 
+                Console.WriteLine(key.KeyChar);
+                Console.WriteLine("Creating snapshot with version {0}...", newVersion);
                 updater.Snapshot(newVersion);
-                Console.WriteLine("What kind of update is this?");
             }
         }
     }

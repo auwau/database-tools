@@ -23,7 +23,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
-    <DacVersion>2.0.0.0</DacVersion>
+    <DacVersion>3.1.1.0</DacVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -60,16 +60,30 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Snapshots" />
+    <Folder Include="Scripts" />
+    <Folder Include="Snapshots\Release 1" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
+    <None Include="Scripts\UpdatePasswords.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DatabaseTools.SampleDatabase.publish.xml" />
-    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_00-22-55.dacpac" />
-    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_00-23-19.dacpac" />
-    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_00-23-38.dacpac" />
-    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_01-41-05.dacpac" />
+    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_11-31-38v2.1.0.0.dacpac" />
+    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_11-37-18v3.0.0.0.dacpac" />
+    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_11-57-50v3.1.0.0.dacpac" />
+    <None Include="Snapshots\DatabaseTools.SampleDatabase_20150213_12-48-29v3.1.1.0.dacpac" />
     <None Include="UpdateDatabase.exe" />
+    <None Include="Snapshots\Release 1\DatabaseTools.SampleDatabase_20150213_10-52-00v1.0.2.0.dacpac" />
+    <None Include="Snapshots\Release 1\DatabaseTools.SampleDatabase_20150213_10-53-37v1.1.0.0.dacpac" />
+    <None Include="Snapshots\Release 1\DatabaseTools.SampleDatabase_20150213_10-59-06v1.1.1.0.dacpac" />
+    <None Include="Snapshots\Release 1\DatabaseTools.SampleDatabase_20150213_10-59-15v1.2.0.0.dacpac" />
+    <None Include="Snapshots\Release 1\DatabaseTools.SampleDatabase_20150213_10-59-23v2.0.0.0.dacpac" />
+    <None Include="DatabaseTools.SampleDatabase.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Scripts\Script.PreDeployment.sql" />
   </ItemGroup>
 </Project>
