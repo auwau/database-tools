@@ -34,11 +34,11 @@ namespace UpdateDatabase
 
             var currentVersion = versionProvider.GetVersion(connectionString, targetDatabaseName);
 
-            Console.WriteLine("Deployment mode for {0} with version {1}", targetDatabaseName, currentVersion);
+            Console.WriteLine("Deployment mode for {0} with version {1}.", targetDatabaseName, currentVersion);
 
             if (latest.Version == currentVersion)
             {
-                Console.WriteLine("Target is latest version: {0}.", latest.Version);
+                Console.WriteLine("Target is latest version: {0}. Skipping deployment.", latest.Version);
                 return;
             }
 
@@ -74,13 +74,13 @@ namespace UpdateDatabase
                 return;
             }
 
-            Console.WriteLine("Upgrading from {0} -> {1}", currentVersion, latest.Version);
+            Console.WriteLine("Upgrading {0} -> {1}.", currentVersion, latest.Version);
 
             var count = 0;
             foreach (var package in historyProvider.GetHistory(currentVersion).OrderBy(x => x.Version))
             {
                 Console.WriteLine();
-                Console.WriteLine("Applying upgrade #{0}: Moving from version {1} to {2}.", ++count, currentVersion, package.Version);
+                Console.WriteLine("Applying upgrade #{0}: {1} -> {2}.", ++count, currentVersion, package.Version);
                 Console.WriteLine();
                 dacService.Deploy(package, targetDatabaseName, true, options);
                 currentVersion = package.Version;
