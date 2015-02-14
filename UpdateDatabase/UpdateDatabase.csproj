@@ -91,6 +91,10 @@
     <Reference Include="Microsoft.SqlServer.Dac.Extensions">
       <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.SqlServer.Dac.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SqlServer.TransactSql.ScriptDom, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.SqlServer.TransactSql.ScriptDom.12.0.1\lib\net40\Microsoft.SqlServer.TransactSql.ScriptDom.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -143,6 +147,7 @@
     <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Schema.Sql.dll" />
     <EmbeddedResource Include="costura32\Microsoft.Data.Tools.Utilities.dll" />
     <EmbeddedResource Include="costura32\Microsoft.SqlServer.Dac.dll" />
+    <EmbeddedResource Include="costura32\Microsoft.SqlServer.TransactSql.ScriptDom.dll" />
     <Content Include="FodyWeavers.xml" />
     <Content Include="UpdateDatabase.html">
       <DependentUpon>UpdateDatabase.md</DependentUpon>
