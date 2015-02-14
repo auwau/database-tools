@@ -22,8 +22,18 @@ namespace UpdateDatabase
 
             var publishSettings = arguments["publish"] ?? arguments["pub"] ?? arguments["p"] ?? arguments["deploy"];
 
-            if (File.Exists(publishSettings))
+            if (!string.IsNullOrEmpty(publishSettings))
             {
+                if (!File.Exists(publishSettings) && Environment.CurrentDirectory != AppDomain.CurrentDomain.BaseDirectory)
+                {
+                    publishSettings = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, publishSettings);
+                }
+
+                if (!File.Exists(publishSettings))
+                {
+                    throw new FileNotFoundException(string.Format("Could not find file {0} in directory {1}.", publishSettings, Environment.CurrentDirectory));
+                }
+
                 var deployer = new DeployApp(new Providers.DacVersionSqlProvider(), new Providers.DacHistory(new FileInfo(publishSettings).Directory));
                 deployer.Deploy(publishSettings);
             }
