@@ -70,7 +70,7 @@ namespace UpdateDatabase
             {
                 //Deploy latest
                 Console.WriteLine("Deploy latest version: {0}.", latest.Version);
-                dacService.Deploy(latest, targetDatabaseName, false, options);
+                dacService.Deploy(latest, targetDatabaseName, true, options);
                 return;
             }
 
