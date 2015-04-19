@@ -3,6 +3,7 @@ using Microsoft.SqlServer.Dac;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UpdateDatabase.Interfaces;
 using UpdateDatabase.Providers;
 
@@ -12,9 +13,11 @@ namespace UpdateDatabase
     {
         private readonly IProvideDacVersion versionProvider;
         private readonly DacHistory historyProvider;
+        private StringBuilder logBuilder;
 
         public DeployApp(IProvideDacVersion versionProvider, DacHistory historyProvider)
         {
+            this.logBuilder = new StringBuilder();
             this.versionProvider = versionProvider;
             this.historyProvider = historyProvider;
         }
@@ -34,11 +37,11 @@ namespace UpdateDatabase
 
             var currentVersion = versionProvider.GetVersion(connectionString, targetDatabaseName);
 
-            Console.WriteLine("Deployment mode for {0} with version {1}.", targetDatabaseName, currentVersion);
+            Log("Deployment mode for {0} with version {1}.", targetDatabaseName, currentVersion);
 
             if (latest.Version == currentVersion)
             {
-                Console.WriteLine("Target is latest version: {0}. Skipping deployment.", latest.Version);
+                Log("Target is latest version: {0}. Skipping deployment.", latest.Version);
                 return;
             }
 
@@ -46,12 +49,12 @@ namespace UpdateDatabase
 
             dacService.Message += (s, e) =>
             {
-                Console.WriteLine("DAC Message: {0}", e.Message);
+                Log("DAC Message: {0}", e.Message);
             };
 
             dacService.ProgressChanged += (s, e) =>
             {
-                Console.WriteLine("{0}: {1}", e.Status, e.Message);
+                Log("{0}: {1}", e.Status, e.Message);
             };
 
             var options = new DacDeployOptions();
@@ -69,21 +72,51 @@ namespace UpdateDatabase
             if (currentVersion == null)
             {
                 //Deploy latest
-                Console.WriteLine("Deploy latest version: {0}.", latest.Version);
+                Log("Deploy latest version: {0}.", latest.Version);
                 dacService.Deploy(latest, targetDatabaseName, true, options);
                 return;
             }
 
-            Console.WriteLine("Upgrading {0} -> {1}.", currentVersion, latest.Version);
+            Log("Upgrading {0} -> {1}.", currentVersion, latest.Version);
 
             var count = 0;
             foreach (var package in historyProvider.GetHistory(currentVersion).OrderBy(x => x.Version))
             {
-                Console.WriteLine();
-                Console.WriteLine("Applying upgrade #{0}: {1} -> {2}.", ++count, currentVersion, package.Version);
-                Console.WriteLine();
+                Log();
+                Log("Applying upgrade #{0}: {1} -> {2}.", ++count, currentVersion, package.Version);
+                Log();
+
+                if (count > 0)
+                {
+                    options.BackupDatabaseBeforeChanges = false;
+                }
+
                 dacService.Deploy(package, targetDatabaseName, true, options);
                 currentVersion = package.Version;
+            }
+
+            var file = new FileInfo(publishSettingsFile);
+            var name = file.Name.Substring(0, file.Name.LastIndexOf(file.Extension));
+            File.WriteAllText(Path.Combine(publishData.DirectoryPath, string.Format("{0}v{1}_upgrade.log", name, currentVersion)), logBuilder.ToString());
+        }
+
+        private readonly object _lockObj = new { };
+
+        private void Log()
+        {
+            lock (_lockObj)
+            {
+                Console.WriteLine();
+                logBuilder.AppendLine();
+            }
+        }
+
+        private void Log(string format, params object[] args)
+        {
+            lock (_lockObj)
+            {
+                Console.WriteLine(format, args);
+                logBuilder.AppendLine(string.Format(format, args));
             }
         }
     }
