@@ -79,25 +79,32 @@ namespace UpdateDatabase
 
             Log("Upgrading {0} -> {1}.", currentVersion, latest.Version);
 
-            var count = 0;
-            foreach (var package in historyProvider.GetHistory(currentVersion).OrderBy(x => x.Version))
+            try
             {
-                Log();
-                Log("Applying upgrade #{0}: {1} -> {2}.", ++count, currentVersion, package.Version);
-                Log();
-
-                if (count > 0)
+                var count = 0;
+                foreach (var package in historyProvider.GetHistory(currentVersion).OrderBy(x => x.Version))
                 {
-                    options.BackupDatabaseBeforeChanges = false;
+                    Log();
+                    Log("Applying upgrade #{0}: {1} -> {2}.", ++count, currentVersion, package.Version);
+                    Log();
+
+                    if (count > 0)
+                    {
+                        options.BackupDatabaseBeforeChanges = false;
+                    }
+
+                    dacService.Deploy(package, targetDatabaseName, true, options);
+                    currentVersion = package.Version;
                 }
-
-                dacService.Deploy(package, targetDatabaseName, true, options);
-                currentVersion = package.Version;
             }
+            catch
+            {
+                var file = new FileInfo(publishSettingsFile);
+                var name = file.Name.Substring(0, file.Name.LastIndexOf(file.Extension));
+                File.WriteAllText(Path.Combine(publishData.DirectoryPath, string.Format("{0}v{1}_error.log", name, currentVersion)), logBuilder.ToString());
 
-            var file = new FileInfo(publishSettingsFile);
-            var name = file.Name.Substring(0, file.Name.LastIndexOf(file.Extension));
-            File.WriteAllText(Path.Combine(publishData.DirectoryPath, string.Format("{0}v{1}_upgrade.log", name, currentVersion)), logBuilder.ToString());
+                throw;
+            }
         }
 
         private readonly object _lockObj = new { };
