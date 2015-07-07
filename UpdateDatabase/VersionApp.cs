@@ -47,6 +47,11 @@ namespace UpdateDatabase
 
             var built = SqlProject.Build();
 
+            if (!built)
+            {
+                throw new Exception("Project does not build!");
+            }
+
             //Locate the latest written .dacpac file (assumption here is that it's the most recently build)
             var latestDacpacFile = Directory.EnumerateFiles(Path.Combine(this.SqlProject.DirectoryPath, "bin"), "*" + Constants.DACPAC_EXT, SearchOption.AllDirectories)
                                             .Select(x => new FileInfo(x))
