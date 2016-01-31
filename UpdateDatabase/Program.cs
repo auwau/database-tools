@@ -1,20 +1,12 @@
-﻿using Microsoft.Build.Evaluation;
-using Microsoft.SqlServer.Dac;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using UpdateDatabase.Util;
 
 namespace UpdateDatabase
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //Legacy.Run(args);
 
@@ -67,15 +59,19 @@ namespace UpdateDatabase
                         case '1':
                             newVersion = versionHelper.NewBuild();
                             break;
+
                         case '2':
                             newVersion = versionHelper.NewMinor();
                             break;
+
                         case '3':
                             newVersion = versionHelper.NewMajor();
                             break;
+
                         case '0':
                             updater.RollBack();
                             return;
+
                         default:
                             break;
                     }
@@ -83,7 +79,17 @@ namespace UpdateDatabase
 
                 Console.WriteLine(key.KeyChar);
                 Console.WriteLine("Creating snapshot with version {0}...", newVersion);
-                updater.Snapshot(newVersion);
+                try
+                {
+                    updater.Snapshot(newVersion);
+                }
+                catch (InvalidOperationException)
+                {
+                    //Revert to old version
+                    updater.SqlProject.SetProperty("DacVersion", oldVersion.ToString());
+                    updater.SqlProject.Save();
+                    throw;
+                }
             }
         }
     }

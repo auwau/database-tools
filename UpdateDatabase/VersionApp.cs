@@ -49,7 +49,7 @@ namespace UpdateDatabase
 
             if (!built)
             {
-                throw new Exception("Project does not build!");
+                throw new InvalidOperationException("Project does not build!");
             }
 
             //Locate the latest written .dacpac file (assumption here is that it's the most recently build)
