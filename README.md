@@ -1,2 +1,2 @@
 # UpdateDatabase
-A Microsoft SQL Server updating application which uses DAC packs. 
+A Microsoft SQL Server updating application which uses Data-Tier Application (DAC) packs. 
