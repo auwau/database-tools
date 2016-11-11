@@ -39,26 +39,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Data.Tools.Contracts">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Contracts.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Schema.Sql, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MS_DACFX_API.13.0.0.1\lib\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Sql">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Sql.dll</HintPath>
+    <Reference Include="Microsoft.Data.Tools.Utilities, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MS_DACFX_API.13.0.0.1\lib\Microsoft.Data.Tools.Utilities.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Tasks.Sql">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Tasks.Sql.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.Dac, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MS_DACFX_API.13.0.0.1\lib\Microsoft.SqlServer.Dac.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Schema.Utilities.Sql">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Schema.Utilities.Sql.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.Dac.Extensions, Version=13.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MS_DACFX_API.13.0.0.1\lib\Microsoft.SqlServer.Dac.Extensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Data.Tools.Utilities">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.Data.Tools.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SqlServer.Dac">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.SqlServer.Dac.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SqlServer.Dac.Extensions">
-      <HintPath>..\packages\Microsoft.SqlServer.DACFx.12.0.2603.2\lib\Microsoft.SqlServer.Dac.Extensions.dll</HintPath>
+    <Reference Include="Microsoft.SqlServer.TransactSql.ScriptDom, Version=13.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\MS_DACFX_API.13.0.0.1\lib\Microsoft.SqlServer.TransactSql.ScriptDom.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="xunit">
@@ -95,9 +94,6 @@
       <Project>{e0299e1b-f6d5-454a-b7ec-fc3cdaf8aca9}</Project>
       <Name>UpdateDatabase</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Microsoft.SqlServer.Dac.xml" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

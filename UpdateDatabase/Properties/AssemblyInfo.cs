@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UpdateDatabase")]
-[assembly: AssemblyCopyright("Copyright © 2014 Joakim Jensen Møller")]
+[assembly: AssemblyCopyright("Copyright © 2016 Joakim Jensen Møller")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
