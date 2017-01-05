@@ -26,8 +26,10 @@ namespace UpdateDatabase
                     throw new FileNotFoundException(string.Format("Could not find file {0} in directory {1}.", publishSettings, Environment.CurrentDirectory));
                 }
 
+                var buildNumber = arguments["v"];
+
                 var deployer = new DeployApp(new Providers.DacVersionSqlProvider(), new Providers.DacHistory(new FileInfo(publishSettings).Directory));
-                deployer.Deploy(publishSettings);
+                deployer.Deploy(publishSettings, buildNumber);
             }
             else
             {
