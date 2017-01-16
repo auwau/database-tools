@@ -236,3 +236,9 @@ $RECYCLE.BIN/
 # Custom special cases
 # =========================
 CloudPortal.Web.LanguageEditor/css/
+
+
+# =========================
+# Visual Studio Generated DB-File
+# =========================
+*.jfm
