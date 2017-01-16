@@ -1,8 +1,6 @@
 ﻿using Microsoft.Build.Evaluation;
 using Microsoft.SqlServer.Dac;
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +22,7 @@ namespace UpdateDatabase
             this.historyProvider = historyProvider;
         }
 
-        public void Deploy(string publishSettingsFile, string buildNumber)
+        public void Deploy(string publishSettingsFile)
         {
             if (!File.Exists(publishSettingsFile))
             {
@@ -39,50 +37,50 @@ namespace UpdateDatabase
 
             var currentVersion = versionProvider.GetVersion(connectionString, targetDatabaseName);
 
+            Log("Deployment mode for {0} with version {1}.", targetDatabaseName, currentVersion);
+
+            if (latest.Version == currentVersion)
+            {
+                Log("Target is latest version: {0}. Skipping deployment.", latest.Version);
+                return;
+            }
+
+            var dacService = new DacServices(connectionString);
+
+            dacService.Message += (s, e) =>
+            {
+                Log("DAC Message: {0}", e.Message);
+            };
+
+            dacService.ProgressChanged += (s, e) =>
+            {
+                Log("{0}: {1}", e.Status, e.Message);
+            };
+
+            var options = new DacDeployOptions();
+            //Load the publish settings
+            foreach (var item in publishData.Properties)
+            {
+                var prop = options.GetType().GetProperty(item.Name);
+                if (prop != null)
+                {
+                    var val = Convert.ChangeType(item.UnevaluatedValue, prop.PropertyType);
+                    prop.SetValue(options, val);
+                }
+            }
+
+            if (currentVersion == null)
+            {
+                //Deploy latest
+                Log("Deploy latest version: {0}.", latest.Version);
+                dacService.Deploy(latest, targetDatabaseName, true, options);
+                return;
+            }
+
+            Log("Upgrading {0} -> {1}.", currentVersion, latest.Version);
+
             try
             {
-                Log("Deployment mode for {0} with version {1}.", targetDatabaseName, currentVersion);
-
-                if (latest.Version == currentVersion)
-                {
-                    Log("Target is latest version: {0}. Skipping deployment.", latest.Version);
-                    UpdateDatabaseBuildNumber(buildNumber, connectionString, targetDatabaseName);
-                    return;
-                }
-
-                var dacService = new DacServices(connectionString);
-
-                dacService.Message += (s, e) =>
-                {
-                    Log("DAC Message: {0}", e.Message);
-                };
-
-                dacService.ProgressChanged += (s, e) =>
-                {
-                    Log("{0}: {1}", e.Status, e.Message);
-                };
-
-                var options = new DacDeployOptions();
-                //Load the publish settings
-                foreach (var item in publishData.Properties)
-                {
-                    var prop = options.GetType().GetProperty(item.Name);
-                    if (prop != null)
-                    {
-                        var val = Convert.ChangeType(item.UnevaluatedValue, prop.PropertyType);
-                        prop.SetValue(options, val);
-                    }
-                }
-
-                if (currentVersion == null)
-                {
-                    //Deploy latest
-                    Log("Deploy latest version: {0}.", latest.Version);
-                    dacService.Deploy(latest, targetDatabaseName, true, options);
-                    return;
-                }
-
-                Log("Upgrading {0} -> {1}.", currentVersion, latest.Version);
                 var count = 0;
                 foreach (var package in historyProvider.GetHistory(currentVersion).OrderBy(x => x.Version))
                 {
@@ -98,41 +96,14 @@ namespace UpdateDatabase
                     dacService.Deploy(package, targetDatabaseName, true, options);
                     currentVersion = package.Version;
                 }
-
-                UpdateDatabaseBuildNumber(buildNumber, connectionString, targetDatabaseName);
             }
-            catch (Exception ex)
+            catch
             {
-                Log(ex.ToString());
-                WriteLog(publishSettingsFile, currentVersion, publishData);
-            }
-        }
+                var file = new FileInfo(publishSettingsFile);
+                var name = file.Name.Substring(0, file.Name.LastIndexOf(file.Extension));
+                File.WriteAllText(Path.Combine(publishData.DirectoryPath, string.Format("{0}v{1}_error.log", name, currentVersion)), logBuilder.ToString());
 
-        private void UpdateDatabaseBuildNumber(string buildNumber, string connectionString, string databaseName)
-        {
-            if (!string.IsNullOrEmpty(buildNumber))
-            {
-                var query = 
-@"USE [" + databaseName + @"]
-IF (EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SystemSetting'))
-BEGIN
-	SET IDENTITY_INSERT [SystemSetting] ON;
-	MERGE INTO [SystemSetting] AS TARGET
-	    USING (VALUES(17, N'Build version', 'BuildVersion', '" + buildNumber + @"', 5, GETUTCDATE()))
-	    AS SOURCE ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate])
-	    ON TARGET.[Id] = SOURCE.[Id]
-	WHEN MATCHED THEN
-	    UPDATE SET [Name] = SOURCE.[Name], [Key] = SOURCE.[Key], [SystemSettingTypeId] = SOURCE.[SystemSettingTypeId], [Value] = SOURCE.[VALUE]
-	WHEN NOT MATCHED BY TARGET THEN
-	    INSERT ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate]) VALUES ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate]);
-	SET IDENTITY_INSERT [SystemSetting] OFF;
-END";
-
-                SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand cmd = new SqlCommand(query, connection);
-                connection.Open();
-                cmd.ExecuteNonQuery();
-                connection.Close();
+                throw;
             }
         }
 
@@ -154,13 +125,6 @@ END";
                 Console.WriteLine(format, args);
                 logBuilder.AppendLine(string.Format(format, args));
             }
-        }
-
-        private void WriteLog(string publishSettingsFile, Version currentVersion, Project publishData)
-        {
-            var file = new FileInfo(publishSettingsFile);
-            var name = file.Name.Substring(0, file.Name.LastIndexOf(file.Extension));
-            File.WriteAllText(Path.Combine(publishData.DirectoryPath, string.Format("{0}v{1}_error.log", name, currentVersion)), logBuilder.ToString());
         }
     }
 }
