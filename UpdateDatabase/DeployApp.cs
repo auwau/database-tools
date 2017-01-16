@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Evaluation;
 using Microsoft.SqlServer.Dac;
 using System;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,8 @@ namespace UpdateDatabase
 
             var connectionString = publishData.GetPropertyValue("TargetConnectionString");
             var targetDatabaseName = publishData.GetPropertyValue("TargetDatabaseName");
+            var buildVersion = publishData.GetPropertyValue("BuildVersion");
+            Log("Known parameters: Connection string: {0}; Database: {1}; Build version: {2};", connectionString, targetDatabaseName, buildVersion);
 
             var currentVersion = versionProvider.GetVersion(connectionString, targetDatabaseName);
 
@@ -42,6 +45,7 @@ namespace UpdateDatabase
             if (latest.Version == currentVersion)
             {
                 Log("Target is latest version: {0}. Skipping deployment.", latest.Version);
+                UpdateDatabaseBuildNumber(buildVersion, connectionString, targetDatabaseName);
                 return;
             }
 
@@ -96,6 +100,7 @@ namespace UpdateDatabase
                     dacService.Deploy(package, targetDatabaseName, true, options);
                     currentVersion = package.Version;
                 }
+                UpdateDatabaseBuildNumber(buildVersion, connectionString, targetDatabaseName);
             }
             catch
             {
@@ -125,6 +130,36 @@ namespace UpdateDatabase
                 Console.WriteLine(format, args);
                 logBuilder.AppendLine(string.Format(format, args));
             }
+        }
+
+        private void UpdateDatabaseBuildNumber(string buildVersion, string connectionString, string databaseName)
+        {
+            if (string.IsNullOrEmpty(buildVersion))
+            {
+                buildVersion = "Not available";
+            }
+
+            var query =
+@"USE [" + databaseName + @"]
+IF (EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'SystemSetting'))
+BEGIN
+	SET IDENTITY_INSERT [SystemSetting] ON;
+	MERGE INTO [SystemSetting] AS TARGET
+	    USING (VALUES(17, N'Build version', 'BuildVersion', '" + buildVersion + @"', 5, GETUTCDATE()))
+	    AS SOURCE ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate])
+	    ON TARGET.[Id] = SOURCE.[Id]
+	WHEN MATCHED THEN
+	    UPDATE SET [Name] = SOURCE.[Name], [Key] = SOURCE.[Key], [SystemSettingTypeId] = SOURCE.[SystemSettingTypeId], [Value] = SOURCE.[VALUE]
+	WHEN NOT MATCHED BY TARGET THEN
+	    INSERT ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate]) VALUES ([Id], [Name], [Key], [Value], [SystemSettingTypeId], [CreatedDate]);
+	SET IDENTITY_INSERT [SystemSetting] OFF;
+END";
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand(query, connection);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            connection.Close();
         }
     }
 }
