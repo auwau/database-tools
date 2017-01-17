@@ -78,6 +78,7 @@ namespace UpdateDatabase
                 //Deploy latest
                 Log("Deploy latest version: {0}.", latest.Version);
                 dacService.Deploy(latest, targetDatabaseName, true, options);
+                UpdateDatabaseBuildNumber(buildVersion, connectionString, targetDatabaseName);
                 return;
             }
 
