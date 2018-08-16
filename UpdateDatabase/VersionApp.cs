@@ -26,7 +26,7 @@ namespace UpdateDatabase
         }
 
         /// <summary>
-        /// Sets the new version on the project, saves and then build it.
+        /// Sets the new version on the project, saves and then builds it.
         /// The result is a dacpac file in the bin folder (depending on build configuration).
         /// The dacpac is located (by searching for the newest .dacpac) and copied into the Snapshots-folder.
         /// Then it's added to the project file.
