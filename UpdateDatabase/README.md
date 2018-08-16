@@ -10,7 +10,6 @@ The user is presented with options to decide the new version number. A snapshot 
 ### Examples
         UpdateDatabase.exe
 or
-
         UpdateDatabase.exe "C:\Development\Project.Database\Project.Database.sqlproj"
 
 ## Upgrade mode
@@ -23,12 +22,12 @@ When a publish-file with or without extension (``.publish.xml``) is specified, t
 
 Then, depending on the version comparison, one of the following tasks will be executed:
 
-- Create database if the target doesn't exist.
-- Upgrade database if ``.dacpac``-version is newer than existing.
-- Do nothing if the version is the same.
+1. Create database if the target doesn't exist.
+2. Upgrade database if ``.dacpac``-version is newer than existing.
+3. Do nothing if the version is the same.
 
 ### Example
-        ``UpdateDatabase.exe /p:"C:\Development\Project.Database\DevSqlDeploy.publish.xml"``
+        UpdateDatabase.exe /p:"C:\Development\Project.Database\DevSqlDeploy.publish.xml"
 
 # Roadmap
 
