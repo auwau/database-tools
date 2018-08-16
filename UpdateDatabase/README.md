@@ -1,19 +1,19 @@
-﻿#UpdateDatabase
+﻿# UpdateDatabase
 This small application has two modes of running:
 
 1. Update mode.
 2. Upgrade mode.
 
-##Update mode
+## Update mode
 The user is presented with options to decide the new version number. A snapshot is then created with that version.
 
-###Examples
+### Examples
         UpdateDatabase.exe
 or
 
         UpdateDatabase.exe "C:\Development\Project.Database\Project.Database.sqlproj"
 
-##Upgrade mode
+## Upgrade mode
 
 When a publish-file with or without extension (``.publish.xml``) is specified, the following steps will be taken:
 
@@ -27,14 +27,14 @@ Then, depending on the version comparison, one of the following tasks will be ex
 - Upgrade database if ``.dacpac``-version is newer than existing.
 - Do nothing if the version is the same.
 
-###Example
+### Example
         ``UpdateDatabase.exe /p:"C:\Development\Project.Database\DevSqlDeploy.publish.xml"``
 
-#Roadmap
+# Roadmap
 
-#DAC Upgrader
+# DAC Upgrader
 
-#Deployment-mode
+# Deployment-mode
 
 1. Find the latest version in History-folder.
 2. Check the deployment target's version:

@@ -120,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="UpdateDatabase.md">
+    <None Include="README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -148,7 +148,7 @@
     <EmbeddedResource Include="costura32\Microsoft.SqlServer.TransactSql.ScriptDom.dll" />
     <None Include="FodyWeavers.xml" />
     <Content Include="UpdateDatabase.html">
-      <DependentUpon>UpdateDatabase.md</DependentUpon>
+      <DependentUpon>README.md</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup />
