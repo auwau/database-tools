@@ -242,3 +242,4 @@ CloudPortal.Web.LanguageEditor/css/
 # Visual Studio Generated DB-File
 # =========================
 *.jfm
+*.vs/
