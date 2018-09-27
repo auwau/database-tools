@@ -42,3 +42,11 @@ Then, depending on the version comparison, one of the following tasks will be ex
     - The target has an older version.
         1. Locate the older version in the upgrades folder and select all version since (excluding the current version and including the latest version).
         2. Sequentially deploy each version increment.
+
+
+# Supporting future versions of MS SQL Server
+
+To upgrade the solution to support future versions of MS SQL Server the dlls in the costura32 folder should be updated.
+The relevant dlls can be found in the C:\Program Files (x86)\Microsoft SQL Server\1xx\DAC\bin folder where 1xx is the number of the SQL Server you wish to support. 
+Current version is 2017 (140)
+Also be sure to update Nuget Packages to latest version.
