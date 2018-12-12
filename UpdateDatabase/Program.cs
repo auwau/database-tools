@@ -97,7 +97,9 @@ namespace UpdateDatabase
             }
             catch (Exception ex)
             {
-                AutoClosingMessageBox.Show("An error occurred", ex.ToString(), 60000);
+                MessageBox.Show(ex.ToString(), "An error occured");
+
+                //AutoClosingMessageBox.Show(ex.ToString(), "An error occured", 60000);
                 throw ex;
             }
         }
