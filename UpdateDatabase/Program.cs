@@ -97,7 +97,7 @@ namespace UpdateDatabase
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "An error occured");
+                MessageBox.Show(ex.ToString(), "Error while configuring database");
 
                 //AutoClosingMessageBox.Show(ex.ToString(), "An error occured", 60000);
                 throw ex;
